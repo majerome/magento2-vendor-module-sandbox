@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add
+                id="Vendor_Module::content"
+                title="Module"
+                translate="title"
+                module="Vendor_Module"
+                resource="Vendor_Module::content"
+                sortOrder="10"
+                parent="Vendor_Base::content"
+        />
+        <add
+                id="Vendor_Module::people"
+                title="People"
+                translate="title"
+                module="Vendor_Module"
+                resource="Vendor_Module::people"
+                parent="Vendor_Module::content"
+                sortOrder="10"
+                action="module/people/index"
+        />
+    </menu>
+</config>
