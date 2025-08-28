@@ -28,95 +28,26 @@
     <modal name="people_form_modal" component="Magento_Ui/js/modal/modal-component">
         <settings>
             <options>
-                <option name="buttons" xsi:type="array">
-                    <item name="0" xsi:type="array">
-                        <item name="text" xsi:type="string">Add People</item>
-                        <item name="class" xsi:type="string">action-primary</item>
-                        <item name="actions" xsi:type="array">
-                            <item name="0" xsi:type="array">
-                                <item name="targetName" xsi:type="string">
-                                    ${ $.name }
-                                </item>
-                                <item name="actionName" xsi:type="string">
-                                    actionDone
-                                </item>
-                            </item>
-                        </item>
-                    </item>
-                    <item name="1" xsi:type="array">
-                        <item name="text" xsi:type="string">Cancel</item>
-                        <item name="class" xsi:type="string">action-secondary</item>
-                        <item name="actions" xsi:type="array">
-                            <item name="0" xsi:type="array">
-                                <item name="targetName" xsi:type="string">
-                                    ${ $.name }
-                                </item>
-                                <item name="actionName" xsi:type="string">
-                                    closeModal
-                                </item>
-                            </item>
-                        </item>
-                    </item>
-                </option>
-                <option name="title" xsi:type="string">Add New People</option>
+                <option name="title" xsi:type="string">New People</option>
                 <option name="type" xsi:type="string">popup</option>
                 <option name="responsive" xsi:type="boolean">true</option>
                 <option name="innerScroll" xsi:type="boolean">true</option>
             </options>
         </settings>
-        <form name="modal_people_form" component="Magento_Ui/js/form/form">
-            <argument name="data" xsi:type="array">
-                <item name="js_config" xsi:type="array">
-                    <item name="provider" xsi:type="string">
-                        modal_people_form.modal_people_form_data_source
-                    </item>
-                </item>
-                <item name="template" xsi:type="string">templates/form/collapsible</item>
-            </argument>
+        <insertForm name="insert_people_form">
             <settings>
-                <namespace>modal_people_form</namespace>
-                <dataScope>data</dataScope>
-                <deps>
-                    <dep>
-                        modal_people_form.modal_people_form_data_source
-                    </dep>
-                </deps>
+                <updateUrl path="mui/index/render"/>
+                <renderUrl path="mui/index/render_handle">
+                    <param name="handle">insert_people_form</param>
+                    <param name="buttons">1</param>
+                    <param name="header">0</param>
+                </renderUrl>
+                <realTimeLink>true</realTimeLink>
+                <toolbarContainer>${ $.parentName }</toolbarContainer>
+                <externalProvider>${ $.ns }.people_form_data_source</externalProvider>
+                <ns>people_form</ns>
             </settings>
-            <dataSource name="modal_people_form_data_source">
-                <argument name="data" xsi:type="array">
-                    <item name="js_config" xsi:type="array">
-                        <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
-                    </item>
-                </argument>
-                <settings>
-                    <submitUrl path="module/people/save"/>
-                </settings>
-                <dataProvider class="Vendor\Module\Ui\DataProvider\People" name="modal_people_form_data_source">
-                    <settings>
-                        <requestFieldName>people_id</requestFieldName>
-                        <primaryFieldName>people_id</primaryFieldName>
-                    </settings>
-                </dataProvider>
-            </dataSource>
-            <fieldset name="people-details">
-                <settings>
-                    <label translate="true">People Details</label>
-                </settings>
-                <field name="people_id" formElement="hidden" sortOrder="10"/>
-                <field name="name" formElement="input" sortOrder="20">
-                    <settings>
-                        <label translate="true">Name</label>
-                        <dataType>text</dataType>
-                        <dataScope>name</dataScope>
-                        <validation>
-                            <rule name="required-entry" xsi:type="boolean">true</rule>
-                            <rule name="min_text_length" xsi:type="number">3</rule>
-                            <rule name="max_text_length" xsi:type="number">30</rule>
-                        </validation>
-                    </settings>
-                </field>
-            </fieldset>
-        </form>
+        </insertForm>
     </modal>
     <dataSource name="people_listing_data_source" component="Magento_Ui/js/grid/provider">
         <settings>

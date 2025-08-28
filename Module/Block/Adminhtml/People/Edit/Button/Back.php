@@ -30,6 +30,6 @@ class Back extends GenericButton implements ButtonProviderInterface
      */
     public function getBackUrl(): string
     {
-        return $this->getUrl('*/*/');
+        return $this->getUrl('module/people/index');
     }
 }

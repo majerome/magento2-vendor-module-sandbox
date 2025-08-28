@@ -16,20 +16,24 @@ class OpenPeopleFormModal implements ButtonProviderInterface
     public function getButtonData()
     {
         return [
-            'label' => __('Open People Form Modal'),
+            'label' => __('Add New People (Modal)'),
             'class' => 'action-secondary',
             'data_attribute' => [
                 'mage-init' => [
                     'Magento_Ui/js/form/button-adapter' => [
                         'actions' => [
                             [
-                                'targetName' => 'modal_people_form',
+                                'targetName' => 'people_listing.people_listing.people_form_modal.insert_people_form',
                                 'actionName' => 'destroyInserted'
                             ],
                             [
                                 'targetName' => 'people_listing.people_listing.people_form_modal',
                                 'actionName' => 'openModal'
-                            ]
+                            ],
+                            [
+                                'targetName' => 'people_listing.people_listing.people_form_modal.insert_people_form',
+                                'actionName' => 'render'
+                            ],
                         ]
                     ]
                 ]

@@ -20,14 +20,9 @@
             <dep>people_form.people_form_data_source</dep>
         </deps>
     </settings>
-    <dataSource name="people_form_data_source">
-        <argument name="data" xsi:type="array">
-            <item name="js_config" xsi:type="array">
-                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
-            </item>
-        </argument>
+    <dataSource name="people_form_data_source" component="Magento_Ui/js/form/provider">
         <settings>
-            <submitUrl path="*/*/save"/>
+            <submitUrl path="module/people/save"/>
         </settings>
         <dataProvider class="Vendor\Module\Ui\DataProvider\People" name="people_form_data_source">
             <settings>
