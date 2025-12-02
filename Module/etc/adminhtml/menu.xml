@@ -21,5 +21,15 @@
                 sortOrder="10"
                 action="module/people/index"
         />
+        <add
+                id="Vendor_Module::skill"
+                title="Skill"
+                translate="title"
+                module="Vendor_Module"
+                resource="Vendor_Module::skill"
+                parent="Vendor_Module::content"
+                sortOrder="10"
+                action="module/skill/index"
+        />
     </menu>
 </config>

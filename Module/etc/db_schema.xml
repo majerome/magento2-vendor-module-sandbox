@@ -10,4 +10,28 @@
             <column name="people_id"/>
         </constraint>
     </table>
+    <table name="vendor_module_skill" engine="innodb" comment="People">
+        <column xsi:type="int" name="skill_id" padding="10" unsigned="true" nullable="false" identity="true"
+                comment="Id"/>
+        <column xsi:type="text" name="name" comment="Name"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="skill_id"/>
+        </constraint>
+    </table>
+    <table name="vendor_module_people_skill" engine="innodb" comment="People Skills">
+        <column xsi:type="int" name="people_id" padding="10" unsigned="true" nullable="false" comment="People Id"/>
+        <column xsi:type="int" name="skill_id" padding="10" unsigned="true" nullable="false" comment="Skill Id"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="people_id"/>
+            <column name="skill_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="VENDOR_MODULE_PEOPLE_SKILL_PEOPLE_ID_VENDOR_MODULE_PEOPLE_PEOPLE_ID"
+                    table="vendor_module_people_skill" column="people_id"
+                    referenceTable="vendor_module_people" referenceColumn="people_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="VENDOR_MODULE_PEOPLE_SKILL_SKILL_ID_VENDOR_MODULE_SKILL_SKILL_ID"
+                    table="vendor_module_people_skill" column="skill_id"
+                    referenceTable="vendor_module_skill" referenceColumn="skill_id"
+                    onDelete="CASCADE"/>
+    </table>
 </schema>

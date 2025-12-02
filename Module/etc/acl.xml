@@ -11,6 +11,11 @@
                             <resource id="Vendor_Module::people_delete" title="Delete" translate="title"
                                       sortOrder="20"/>
                         </resource>
+                        <resource id="Vendor_Module::skill" title="Skill" translate="title" sortOrder="10">
+                            <resource id="Vendor_Module::skill_save" title="Save" translate="title" sortOrder="10"/>
+                            <resource id="Vendor_Module::skill_delete" title="Delete" translate="title"
+                                      sortOrder="20"/>
+                        </resource>
                     </resource>
                 </resource>
             </resource>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">skill_form.skill_form_data_source</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="back" class="Vendor\Module\Block\Adminhtml\Skill\Edit\Button\Back"/>
+            <button name="delete" class="Vendor\Module\Block\Adminhtml\Skill\Edit\Button\Delete"/>
+            <button name="save" class="Vendor\Module\Block\Adminhtml\Skill\Edit\Button\Save"/>
+        </buttons>
+        <namespace>skill_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>skill_form.skill_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="skill_form_data_source" component="Magento_Ui/js/form/provider">
+        <settings>
+            <submitUrl path="module/skill/save"/>
+        </settings>
+        <dataProvider class="Vendor\Module\Ui\DataProvider\Skill" name="skill_form_data_source">
+            <settings>
+                <requestFieldName>skill_id</requestFieldName>
+                <primaryFieldName>skill_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="skill-details">
+        <settings>
+            <label translate="true">Skill Details</label>
+        </settings>
+
+        <field name="skill_id" formElement="hidden"/>
+
+        <field name="name" formElement="input" sortOrder="10">
+            <settings>
+                <label translate="true">Name</label>
+                <dataType>text</dataType>
+                <dataScope>name</dataScope>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                    <rule name="min_text_length" xsi:type="number">3</rule>
+                    <rule name="max_text_length" xsi:type="number">30</rule>
+                </validation>
+            </settings>
+        </field>
+    </fieldset>
+</form>

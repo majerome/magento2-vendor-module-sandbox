@@ -9,11 +9,21 @@
             <argument name="resourceModel" xsi:type="string">Vendor\Module\Model\ResourceModel\People</argument>
         </arguments>
     </virtualType>
+    <virtualType name="Vendor\Module\Model\ResourceModel\Skill\Grid\Collection"
+                 type="Magento\Framework\View\Element\UiComponent\DataProvider\SearchResult">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">vendor_module_skill</argument>
+            <argument name="resourceModel" xsi:type="string">Vendor\Module\Model\ResourceModel\Skill</argument>
+        </arguments>
+    </virtualType>
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
                 <item name="people_listing_data_source" xsi:type="string">
                     Vendor\Module\Model\ResourceModel\People\Grid\Collection
+                </item>
+                <item name="skill_listing_data_source" xsi:type="string">
+                    Vendor\Module\Model\ResourceModel\Skill\Grid\Collection
                 </item>
             </argument>
         </arguments>

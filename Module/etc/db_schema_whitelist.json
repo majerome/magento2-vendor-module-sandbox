@@ -1,0 +1,31 @@
+{
+    "vendor_module_people": {
+        "column": {
+            "people_id": true,
+            "name": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "vendor_module_skill": {
+        "column": {
+            "skill_id": true,
+            "name": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    },
+    "vendor_module_people_skill": {
+        "column": {
+            "people_id": true,
+            "skill_id": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "FK_8DB1E4A088BB439109DD761EF8341C23": true,
+            "VENDOR_MODULE_PEOPLE_SKILL_SKILL_ID_VENDOR_MODULE_SKILL_SKILL_ID": true
+        }
+    }
+}
