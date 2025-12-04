@@ -12,7 +12,8 @@
     "vendor_module_skill": {
         "column": {
             "skill_id": true,
-            "name": true
+            "name": true,
+            "assigned_people": true
         },
         "constraint": {
             "PRIMARY": true

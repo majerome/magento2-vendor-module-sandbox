@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Vendor\Module\Controller\Adminhtml\Skill;
 
-use Http\Discovery\Exception;
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Exception\AlreadyExistsException;
-use Magento\Framework\Exception\NotFoundException;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\HTTP\PhpEnvironment\Request;
-use Vendor\Module\Model\SkillFactory;
 use Vendor\Module\Api\SkillRepositoryInterface;
+use Vendor\Module\Model\SkillFactory;
 
 class Save extends Action implements HttpPostActionInterface
 {
@@ -28,8 +28,8 @@ class Save extends Action implements HttpPostActionInterface
      * @param SkillRepositoryInterface $skillRepository
      */
     public function __construct(
-        Action\Context                     $context,
-        private readonly SkillFactory    $skillFactory,
+        Action\Context                            $context,
+        private readonly SkillFactory             $skillFactory,
         private readonly SkillRepositoryInterface $skillRepository,
     ) {
         parent::__construct($context);
@@ -39,7 +39,8 @@ class Save extends Action implements HttpPostActionInterface
      * Execute a controller action.
      *
      * @return Redirect
-     * @throws NotFoundException|AlreadyExistsException
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function execute(): Redirect
     {
@@ -52,13 +53,9 @@ class Save extends Action implements HttpPostActionInterface
         $redirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
 
         if ($isExistingSkill) {
-            try {
-                $skill = $this->skillRepository->getById($post->skill_id);
-                if (!$skill->getData('skill_id')) {
-                    throw new NotFoundException(__('This record no longer exists.'));
-                }
-            } catch (Exception $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
+            $skill = $this->skillRepository->getById($post->skill_id);
+            if (!$skill->getData('skill_id')) {
+                $this->messageManager->addErrorMessage(__('That record no longer exists.'));
                 return $redirect->setPath('*/*/');
             }
         } else {
@@ -66,12 +63,17 @@ class Save extends Action implements HttpPostActionInterface
             unset($post->skill_id);
         }
 
+        $arrayPost = $post->toArray();
+        if (!array_key_exists('skill_people_ids', $arrayPost)) {
+            $arrayPost['skill_people_ids'] = [];
+        }
+
         $skill->setData(array_merge($skill->getData(), $post->toArray()));
 
         try {
             $this->skillRepository->save($skill);
             $this->messageManager->addSuccessMessage(__('The record has been saved.'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->messageManager->addErrorMessage(__('There was a problem saving the record: %1', $e->getMessage()));
             if ($isExistingSkill) {
                 return $redirect->setPath('*/*/edit', [

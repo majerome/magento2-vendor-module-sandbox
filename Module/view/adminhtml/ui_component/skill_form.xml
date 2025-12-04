@@ -34,9 +34,7 @@
         <settings>
             <label translate="true">Skill Details</label>
         </settings>
-
         <field name="skill_id" formElement="hidden"/>
-
         <field name="name" formElement="input" sortOrder="10">
             <settings>
                 <label translate="true">Name</label>
@@ -49,5 +47,172 @@
                 </validation>
             </settings>
         </field>
+    </fieldset>
+    <fieldset name="assigned_people" sortOrder="10">
+        <settings>
+            <additionalClasses>
+                <class name="admin__fieldset-section">true</class>
+            </additionalClasses>
+            <label translate="true">Assigned People</label>
+        </settings>
+        <container name="button_set" template="ui/form/components/complex">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">container</item>
+                    <item name="componentType" xsi:type="string">container</item>
+                    <item name="label" xsi:type="string"/>
+                    <item name="content" xsi:type="string" translate="true">Browse and select peoples from the grid to
+                        assign them to this skill.
+                    </item>
+                </item>
+            </argument>
+            <container name="button_related" component="Magento_Ui/js/form/components/button">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="formElement" xsi:type="string">container</item>
+                        <item name="componentType" xsi:type="string">container</item>
+                        <item name="actions" xsi:type="array">
+                            <item name="0" xsi:type="array">
+                                <item name="targetName" xsi:type="string">
+                                    skill_form.skill_form.assigned_people.modal
+                                </item>
+                                <item name="actionName" xsi:type="string">toggleModal</item>
+                            </item>
+                            <item name="1" xsi:type="array">
+                                <item name="targetName" xsi:type="string">
+                                    skill_form.skill_form.assigned_people.modal.skill_people_listing
+                                </item>
+                                <item name="actionName" xsi:type="string">render</item>
+                            </item>
+                        </item>
+                        <item name="title" xsi:type="string">Add People</item>
+                    </item>
+                </argument>
+            </container>
+        </container>
+        <modal name="modal">
+            <settings>
+                <options>
+                    <option name="title" xsi:type="string">Add Selected</option>
+                    <option name="buttons" xsi:type="array">
+                        <item name="0" xsi:type="array">
+                            <item name="text" xsi:type="string" translate="true">Cancel</item>
+                            <item name="actions" xsi:type="array">
+                                <item name="0" xsi:type="string">closeModal</item>
+                            </item>
+                        </item>
+                        <item name="1" xsi:type="array">
+                            <item name="text" xsi:type="string" translate="true">Add Selected</item>
+                            <item name="class" xsi:type="string">action-primary</item>
+                            <item name="actions" xsi:type="array">
+                                <item name="0" xsi:type="array">
+                                    <item name="targetName" xsi:type="string">index = skill_people_listing</item>
+                                    <item name="actionName" xsi:type="string">save</item>
+                                </item>
+                                <item name="1" xsi:type="string">closeModal</item>
+                            </item>
+                        </item>
+                    </option>
+                </options>
+            </settings>
+            <insertListing name="skill_people_listing">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="externalTransfer" xsi:type="boolean">true</item>
+                    </item>
+                </argument>
+                <settings>
+                    <autoRender>false</autoRender>
+                    <dataScope>skill_people_listing</dataScope>
+                    <externalProvider>people_listing.people_listing_data_source</externalProvider>
+                    <selectionsProvider>people_listing.people_listing.people_columns.ids</selectionsProvider>
+                    <ns>people_listing</ns>
+                    <realTimeLink>true</realTimeLink>
+                    <dataLinks>
+                        <imports>false</imports>
+                        <exports>true</exports>
+                    </dataLinks>
+                    <behaviourType>simple</behaviourType>
+                    <externalFilterMode>true</externalFilterMode>
+                    <imports>
+                        <link name="peopleId">${ $.provider }:data.skill_people_ids.current_people_id</link>
+                    </imports>
+                    <exports>
+                        <link name="peopleId">${ $.externalProvider }:params.current_people_id</link>
+                    </exports>
+                </settings>
+            </insertListing>
+        </modal>
+        <container
+                name="skill_people_ids"
+                component="Magento_Catalog/js/components/reset-dynamic-rows-grid-row-position-on-delete"
+                template="ui/dynamic-rows/templates/grid"
+        >
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="additionalClasses" xsi:type="string">admin__field-wide</item>
+                    <item name="componentType" xsi:type="string">dynamicRows</item>
+                    <item name="label" xsi:type="string"/>
+                    <item name="columnsHeader" xsi:type="boolean">false</item>
+                    <item name="columnsHeaderAfterRender" xsi:type="boolean">true</item>
+                    <item name="renderDefaultRecord" xsi:type="boolean">false</item>
+                    <item name="addButton" xsi:type="boolean">false</item>
+                    <item name="recordTemplate" xsi:type="string">record</item>
+                    <item name="identificationProperty" xsi:type="string">id</item>
+                    <item name="identificationDRProperty" xsi:type="string">id</item>
+                    <item name="deleteButtonLabel" xsi:type="string">Remove</item>
+                    <item name="dataProvider" xsi:type="string">skill_people_listing</item>
+                    <item name="dndConfig" xsi:type="array">
+                        <item name="enabled" xsi:type="boolean">false</item>
+                    </item>
+                    <item name="deleteProperty" xsi:type="string">delete</item>
+                    <item name="map" xsi:type="array">
+                        <item name="id" xsi:type="string">people_id</item>
+                        <item name="name" xsi:type="string">name</item>
+                    </item>
+                    <item name="links" xsi:type="array">
+                        <item name="insertData" xsi:type="string">${ $.provider }:data.${ $.dataProvider }</item>
+                    </item>
+                </item>
+            </argument>
+            <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="componentType" xsi:type="string">container</item>
+                        <item name="isTemplate" xsi:type="boolean">true</item>
+                        <item name="is_collection" xsi:type="boolean">true</item>
+                    </item>
+                </argument>
+                <field name="id" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="10">
+                    <settings>
+                        <label translate="true">ID</label>
+                        <dataType>text</dataType>
+                        <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    </settings>
+                </field>
+                <field name="name" component="Magento_Ui/js/form/element/text" formElement="input" sortOrder="20">
+                    <settings>
+                        <label translate="true">Name</label>
+                        <dataType>text</dataType>
+                        <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    </settings>
+                </field>
+                <actionDelete sortOrder="30">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="fit" xsi:type="boolean">false</item>
+                        </item>
+                    </argument>
+                    <settings>
+                        <additionalClasses>
+                            <class name="data-grid-actions-cell">true</class>
+                        </additionalClasses>
+                        <dataType>text</dataType>
+                        <label>Actions</label>
+                        <componentType>actionDelete</componentType>
+                    </settings>
+                </actionDelete>
+            </container>
+        </container>
     </fieldset>
 </form>

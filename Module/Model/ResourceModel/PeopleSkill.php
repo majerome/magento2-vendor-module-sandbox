@@ -73,4 +73,35 @@ class PeopleSkill extends AbstractDb
 
         return $connection->fetchCol($select);
     }
+
+    /**
+     * Save people relations for a given skill ID
+     *
+     * @param int $skillId
+     * @param array $peopleIds
+     * @return PeopleSkill
+     */
+    public function savePeopleRelations(int $skillId, array $peopleIds): PeopleSkill
+    {
+        $connection = $this->getConnection();
+
+        $connection->delete(
+            self::MAIN_TABLE,
+            [self::SKILL_ID_FIELD_NAME . ' = ?' => $skillId]
+        );
+
+        $data = [];
+        foreach ($peopleIds as $peopleId) {
+            $data[] = [
+                self::PEOPLE_ID_FIELD_NAME => $peopleId,
+                self::SKILL_ID_FIELD_NAME => $skillId
+            ];
+        }
+
+        if (!empty($data)) {
+            $connection->insertMultiple(self::MAIN_TABLE, $data);
+        }
+
+        return $this;
+    }
 }

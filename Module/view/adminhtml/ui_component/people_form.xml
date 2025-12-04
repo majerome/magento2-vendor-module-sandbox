@@ -34,9 +34,7 @@
         <settings>
             <label translate="true">People Details</label>
         </settings>
-
         <field name="people_id" formElement="hidden"/>
-
         <field name="name" formElement="input" sortOrder="10">
             <settings>
                 <label translate="true">Name</label>

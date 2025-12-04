@@ -15,6 +15,7 @@
         <column xsi:type="int" name="skill_id" padding="10" unsigned="true" nullable="false" identity="true"
                 comment="Id"/>
         <column xsi:type="text" name="name" comment="Name"/>
+        <column name="assigned_people" xsi:type="text" nullable="true" comment="Assigned people on dynamic rows"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="skill_id"/>
         </constraint>

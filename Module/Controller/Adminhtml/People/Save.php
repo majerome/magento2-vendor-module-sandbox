@@ -72,6 +72,7 @@ class Save extends Action implements HttpPostActionInterface
 
         try {
             $this->peopleRepository->save($people);
+            $this->messageManager->addSuccessMessage(__('The record has been saved.'));
         } catch (Exception $e) {
             $this->messageManager->addErrorMessage(__('There was a problem saving the record: %1', $e->getMessage()));
             if ($isExistingPeople) {
