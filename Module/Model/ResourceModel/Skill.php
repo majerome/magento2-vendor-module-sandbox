@@ -14,6 +14,9 @@ class Skill extends AbstractDb
     /** @var string Main table primary key field name */
     public const ID_FIELD_NAME = 'skill_id';
 
+    /**
+     * Define main table and primary key field
+     */
     protected function _construct(): void
     {
         $this->_init(self::MAIN_TABLE, self::ID_FIELD_NAME);

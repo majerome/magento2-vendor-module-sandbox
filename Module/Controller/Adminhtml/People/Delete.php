@@ -10,8 +10,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Vendor\Module\Model\PeopleFactory;
-use Vendor\Module\Model\ResourceModel\People as PeopleResource;
+use Vendor\Module\Api\PeopleRepositoryInterface;
 
 class Delete extends Action implements HttpGetActionInterface
 {
@@ -21,15 +20,12 @@ class Delete extends Action implements HttpGetActionInterface
      * Constructor class
      *
      * @param Context $context
-     * @param PeopleFactory $peopleFactory
-     * @param PeopleResource $peopleResource
+     * @param PeopleRepositoryInterface $peopleRepository
      */
     public function __construct(
         private readonly Context          $context,
-        private readonly PeopleFactory  $peopleFactory,
-        private readonly PeopleResource $peopleResource
-    )
-    {
+        private readonly PeopleRepositoryInterface  $peopleRepository,
+    ) {
         parent::__construct($context);
     }
 
@@ -42,10 +38,10 @@ class Delete extends Action implements HttpGetActionInterface
     {
         try {
             $peopleId = $this->getRequest()->getParam('people_id');
-            $people = $this->peopleFactory->create();
-            $this->peopleResource->load($people, $peopleId);
+            $people = $this->peopleRepository->getById($peopleId);
+
             if ($people->getData('people_id')) {
-                $this->peopleResource->delete($people);
+                $this->peopleRepository->delete($people);
                 $this->messageManager->addSuccessMessage(__('The record has been deleted.'));
             } else {
                 $this->messageManager->addErrorMessage(__('The record does not exist.'));

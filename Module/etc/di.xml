@@ -28,4 +28,10 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Vendor\Module\Api\Data\PeopleInterface"
+                type="Vendor\Module\Model\People"/>
+    <preference for="Vendor\Module\Api\Data\PeopleSearchResultsInterface"
+                type="Vendor\Module\Model\PeopleSearchResults"/>
+    <preference for="Vendor\Module\Api\PeopleRepositoryInterface"
+                type="Vendor\Module\Model\PeopleRepository"/>
 </config>

@@ -9,6 +9,9 @@ use Vendor\Module\Model\Skill;
 
 class Collection extends AbstractCollection
 {
+    /**
+     * Define model & resource model
+     */
     protected function _construct(): void
     {
         $this->_init(Skill::class, \Vendor\Module\Model\ResourceModel\Skill::class);

@@ -8,6 +8,9 @@ use Magento\Framework\Model\AbstractModel;
 
 class Skill extends AbstractModel
 {
+    /**
+     * Define resource model
+     */
     protected function _construct(): void
     {
         $this->_init(ResourceModel\Skill::class);

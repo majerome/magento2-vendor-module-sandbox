@@ -10,9 +10,8 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Vendor\Module\Model\PeopleFactory;
 use Vendor\Module\Model\PeopleValidator;
-use Vendor\Module\Model\ResourceModel\People as PeopleResource;
+use Vendor\Module\Api\PeopleRepositoryInterface;
 
 class InlineEdit extends Action implements HttpPostActionInterface
 {
@@ -23,14 +22,12 @@ class InlineEdit extends Action implements HttpPostActionInterface
      *
      * @param Context $context
      * @param JsonFactory $jsonFactory
-     * @param PeopleFactory $peopleFactory
-     * @param PeopleResource $peopleResource
+     * @param PeopleRepositoryInterface $peopleRepository
      */
     public function __construct(
         private readonly Context          $context,
         private readonly JsonFactory      $jsonFactory,
-        private readonly PeopleFactory  $peopleFactory,
-        private readonly PeopleResource $peopleResource,
+        private readonly PeopleRepositoryInterface $peopleRepository,
     ) {
         parent::__construct($context);
     }
@@ -57,10 +54,9 @@ class InlineEdit extends Action implements HttpPostActionInterface
             foreach ($items as $item) {
                 $peopleId = $item['people_id'];
                 try {
-                    $people = $this->peopleFactory->create();
-                    $this->peopleResource->load($people, $peopleId);
+                    $people = $this->peopleRepository->getById($peopleId);
                     $people->addData($item);
-                    $this->peopleResource->save($people);
+                    $this->peopleRepository->save($people);
                 } catch (Exception $e) {
                     $messages[] = __("Something went wrong while saving item $peopleId: ") . $e->getMessage();
                     $error = true;

@@ -10,9 +10,11 @@ use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\HTTP\PhpEnvironment\Request;
 use Vendor\Module\Model\PeopleFactory;
-use Vendor\Module\Model\ResourceModel\People as PeopleResource;
+use Vendor\Module\Api\PeopleRepositoryInterface;
 
 class Save extends Action implements HttpPostActionInterface
 {
@@ -23,12 +25,12 @@ class Save extends Action implements HttpPostActionInterface
      *
      * @param Context $context
      * @param PeopleFactory $peopleFactory
-     * @param PeopleResource $peopleResource
+     * @param PeopleRepositoryInterface $peopleRepository
      */
     public function __construct(
         Action\Context                  $context,
         private readonly PeopleFactory  $peopleFactory,
-        private readonly PeopleResource $peopleResource
+        private readonly PeopleRepositoryInterface $peopleRepository,
     ) {
         parent::__construct($context);
     }
@@ -37,6 +39,8 @@ class Save extends Action implements HttpPostActionInterface
      * Execute a controller action.
      *
      * @return Redirect
+     * @throws LocalizedException
+     * @throws NoSuchEntityException
      */
     public function execute(): Redirect
     {
@@ -49,7 +53,7 @@ class Save extends Action implements HttpPostActionInterface
         $redirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
 
         if ($isExistingPeople) {
-            $this->peopleResource->load($people, $post->people_id);
+            $people = $this->peopleRepository->getById($post->people_id);
             if (!$people->getData('people_id')) {
                 $this->messageManager->addErrorMessage(__('That record no longer exists.'));
                 return $redirect->setPath('*/*/');
@@ -67,7 +71,7 @@ class Save extends Action implements HttpPostActionInterface
         $people->setData(array_merge($people->getData(), $post->toArray()));
 
         try {
-            $this->peopleResource->save($people);
+            $this->peopleRepository->save($people);
         } catch (Exception $e) {
             $this->messageManager->addErrorMessage(__('There was a problem saving the record: %1', $e->getMessage()));
             if ($isExistingPeople) {
