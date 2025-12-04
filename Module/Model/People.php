@@ -13,7 +13,6 @@ class People extends AbstractModel implements PeopleInterface
     /**
      * Initialize the People model
      *
-     * @return void
      * @throws LocalizedException
      */
     protected function _construct(): void

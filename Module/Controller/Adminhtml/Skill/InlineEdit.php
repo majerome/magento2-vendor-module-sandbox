@@ -10,9 +10,8 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
-use Vendor\Module\Model\SkillFactory;
 use Vendor\Module\Model\SkillValidator;
-use Vendor\Module\Model\ResourceModel\Skill as SkillResource;
+use Vendor\Module\Api\SkillRepositoryInterface;
 
 class InlineEdit extends Action implements HttpPostActionInterface
 {
@@ -23,14 +22,12 @@ class InlineEdit extends Action implements HttpPostActionInterface
      *
      * @param Context $context
      * @param JsonFactory $jsonFactory
-     * @param SkillFactory $skillFactory
-     * @param SkillResource $skillResource
+     * @param SkillRepositoryInterface $skillRepository
      */
     public function __construct(
-        private readonly Context          $context,
-        private readonly JsonFactory      $jsonFactory,
-        private readonly SkillFactory  $skillFactory,
-        private readonly SkillResource $skillResource,
+        private readonly Context                  $context,
+        private readonly JsonFactory              $jsonFactory,
+        private readonly SkillRepositoryInterface $skillRepository
     ) {
         parent::__construct($context);
     }
@@ -57,10 +54,9 @@ class InlineEdit extends Action implements HttpPostActionInterface
             foreach ($items as $item) {
                 $skillId = $item['skill_id'];
                 try {
-                    $skill = $this->skillFactory->create();
-                    $this->skillResource->load($skill, $skillId);
+                    $skill = $this->skillRepository->getById($skillId);
                     $skill->addData($item);
-                    $this->skillResource->save($skill);
+                    $this->skillRepository->save($skill);
                 } catch (Exception $e) {
                     $messages[] = __("Something went wrong while saving item $skillId: ") . $e->getMessage();
                     $error = true;

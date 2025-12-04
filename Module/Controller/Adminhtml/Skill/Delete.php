@@ -11,8 +11,7 @@ use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Vendor\Module\Model\ResourceModel\PeopleSkill;
-use Vendor\Module\Model\ResourceModel\Skill as SkillResource;
-use Vendor\Module\Model\SkillFactory;
+use Vendor\Module\Api\SkillRepositoryInterface;
 
 class Delete extends Action implements HttpGetActionInterface
 {
@@ -22,15 +21,13 @@ class Delete extends Action implements HttpGetActionInterface
      * Constructor class
      *
      * @param Context $context
-     * @param SkillFactory $skillFactory
-     * @param SkillResource $skillResource
      * @param PeopleSkill $peopleSkillResource
+     * @param SkillRepositoryInterface $skillRepository
      */
     public function __construct(
         private readonly Context       $context,
-        private readonly SkillFactory  $skillFactory,
-        private readonly SkillResource $skillResource,
-        private readonly PeopleSkill   $peopleSkillResource
+        private readonly PeopleSkill   $peopleSkillResource,
+        private readonly SkillRepositoryInterface $skillRepository
     ) {
         parent::__construct($context);
     }
@@ -44,10 +41,8 @@ class Delete extends Action implements HttpGetActionInterface
     {
         try {
             $skillId = $this->getRequest()->getParam('skill_id');
-            $skill = $this->skillFactory->create();
-            $this->skillResource->load($skill, $skillId);
-            if ($skill->getData('skill_id')) {
-
+            $skill = $this->skillRepository->getById((int)$skillId);
+            if ($skill->getId()) {
                 $relatedPeopleIds = $this->peopleSkillResource->getPeopleIds((int)$skillId);
                 if (!empty($relatedPeopleIds)) {
                     $this->messageManager->addErrorMessage(
@@ -57,8 +52,7 @@ class Delete extends Action implements HttpGetActionInterface
                     $redirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
                     return $redirect->setPath('*/*');
                 }
-
-                $this->skillResource->delete($skill);
+                $this->skillRepository->delete($skill);
                 $this->messageManager->addSuccessMessage(__('The record has been deleted.'));
             } else {
                 $this->messageManager->addErrorMessage(__('The record does not exist.'));

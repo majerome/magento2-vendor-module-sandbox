@@ -14,7 +14,7 @@ use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\HTTP\PhpEnvironment\Request;
 use Vendor\Module\Model\SkillFactory;
-use Vendor\Module\Model\ResourceModel\Skill as SkillResource;
+use Vendor\Module\Api\SkillRepositoryInterface;
 
 class Save extends Action implements HttpPostActionInterface
 {
@@ -25,12 +25,12 @@ class Save extends Action implements HttpPostActionInterface
      *
      * @param Context $context
      * @param SkillFactory $skillFactory
-     * @param SkillResource $skillResource
+     * @param SkillRepositoryInterface $skillRepository
      */
     public function __construct(
         Action\Context                     $context,
         private readonly SkillFactory    $skillFactory,
-        private readonly SkillResource    $skillResource
+        private readonly SkillRepositoryInterface $skillRepository,
     ) {
         parent::__construct($context);
     }
@@ -53,7 +53,7 @@ class Save extends Action implements HttpPostActionInterface
 
         if ($isExistingSkill) {
             try {
-                $this->skillResource->load($skill, $post->skill_id);
+                $skill = $this->skillRepository->getById($post->skill_id);
                 if (!$skill->getData('skill_id')) {
                     throw new NotFoundException(__('This record no longer exists.'));
                 }
@@ -69,7 +69,8 @@ class Save extends Action implements HttpPostActionInterface
         $skill->setData(array_merge($skill->getData(), $post->toArray()));
 
         try {
-            $this->skillResource->save($skill);
+            $this->skillRepository->save($skill);
+            $this->messageManager->addSuccessMessage(__('The record has been saved.'));
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage(__('There was a problem saving the record: %1', $e->getMessage()));
             if ($isExistingSkill) {

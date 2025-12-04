@@ -34,4 +34,10 @@
                 type="Vendor\Module\Model\PeopleSearchResults"/>
     <preference for="Vendor\Module\Api\PeopleRepositoryInterface"
                 type="Vendor\Module\Model\PeopleRepository"/>
+    <preference for="Vendor\Module\Api\Data\SkillInterface"
+                type="Vendor\Module\Model\Skill"/>
+    <preference for="Vendor\Module\Api\Data\SkillSearchResultsInterface"
+                type="Vendor\Module\Model\SkillSearchResults"/>
+    <preference for="Vendor\Module\Api\SkillRepositoryInterface"
+                type="Vendor\Module\Model\SkillRepository"/>
 </config>
