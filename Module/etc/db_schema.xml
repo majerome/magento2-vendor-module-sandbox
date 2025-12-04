@@ -6,6 +6,7 @@
         <column xsi:type="int" name="people_id" padding="10" unsigned="true" nullable="false" identity="true"
                 comment="Id"/>
         <column xsi:type="text" name="name" comment="Name"/>
+        <column name="related_skills" xsi:type="text" nullable="true" comment="Related skills on dynamic rows"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="people_id"/>
         </constraint>

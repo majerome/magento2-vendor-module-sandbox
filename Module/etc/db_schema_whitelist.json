@@ -2,7 +2,8 @@
     "vendor_module_people": {
         "column": {
             "people_id": true,
-            "name": true
+            "name": true,
+            "related_skills": true
         },
         "constraint": {
             "PRIMARY": true

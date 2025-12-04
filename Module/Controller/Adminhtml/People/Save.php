@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Vendor\Module\Controller\Adminhtml\People;
 
-use Http\Discovery\Exception;
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultFactory;
-use Magento\Framework\Exception\AlreadyExistsException;
-use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\HTTP\PhpEnvironment\Request;
 use Vendor\Module\Model\PeopleFactory;
 use Vendor\Module\Model\ResourceModel\People as PeopleResource;
@@ -28,9 +26,9 @@ class Save extends Action implements HttpPostActionInterface
      * @param PeopleResource $peopleResource
      */
     public function __construct(
-        Action\Context                     $context,
-        private readonly PeopleFactory    $peopleFactory,
-        private readonly PeopleResource    $peopleResource
+        Action\Context                  $context,
+        private readonly PeopleFactory  $peopleFactory,
+        private readonly PeopleResource $peopleResource
     ) {
         parent::__construct($context);
     }
@@ -39,7 +37,6 @@ class Save extends Action implements HttpPostActionInterface
      * Execute a controller action.
      *
      * @return Redirect
-     * @throws NotFoundException|AlreadyExistsException
      */
     public function execute(): Redirect
     {
@@ -52,13 +49,9 @@ class Save extends Action implements HttpPostActionInterface
         $redirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
 
         if ($isExistingPeople) {
-            try {
-                $this->peopleResource->load($people, $post->people_id);
-                if (!$people->getData('people_id')) {
-                    throw new NotFoundException(__('This record no longer exists.'));
-                }
-            } catch (Exception $e) {
-                $this->messageManager->addErrorMessage($e->getMessage());
+            $this->peopleResource->load($people, $post->people_id);
+            if (!$people->getData('people_id')) {
+                $this->messageManager->addErrorMessage(__('That record no longer exists.'));
                 return $redirect->setPath('*/*/');
             }
         } else {
@@ -66,11 +59,16 @@ class Save extends Action implements HttpPostActionInterface
             unset($post->people_id);
         }
 
+        $arrayPost = $post->toArray();
+        if (!array_key_exists('people_skill_ids', $arrayPost)) {
+            $arrayPost['people_skill_ids'] = [];
+        }
+
         $people->setData(array_merge($people->getData(), $post->toArray()));
 
         try {
             $this->peopleResource->save($people);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->messageManager->addErrorMessage(__('There was a problem saving the record: %1', $e->getMessage()));
             if ($isExistingPeople) {
                 return $redirect->setPath('*/*/edit', [
