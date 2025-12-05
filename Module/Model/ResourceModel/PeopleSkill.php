@@ -34,7 +34,7 @@ class PeopleSkill extends AbstractDb
      * @param array $skillIds
      * @return PeopleSkill
      */
-    public function saveSkillRelations(int $peopleId, array $skillIds): PeopleSkill
+    public function updatePeopleSkills(int $peopleId, array $skillIds): PeopleSkill
     {
         $connection = $this->getConnection();
 
@@ -46,8 +46,8 @@ class PeopleSkill extends AbstractDb
         $data = [];
         foreach ($skillIds as $skillId) {
             $data[] = [
-                self::PEOPLE_ID_FIELD_NAME => $peopleId,
-                self::SKILL_ID_FIELD_NAME => $skillId
+                self::PEOPLE_ID_FIELD_NAME => (int)$peopleId,
+                self::SKILL_ID_FIELD_NAME => (int)$skillId
             ];
         }
 
@@ -81,7 +81,7 @@ class PeopleSkill extends AbstractDb
      * @param array $peopleIds
      * @return PeopleSkill
      */
-    public function savePeopleRelations(int $skillId, array $peopleIds): PeopleSkill
+    public function updateSkillPeople(int $skillId, array $peopleIds): PeopleSkill
     {
         $connection = $this->getConnection();
 
@@ -93,8 +93,8 @@ class PeopleSkill extends AbstractDb
         $data = [];
         foreach ($peopleIds as $peopleId) {
             $data[] = [
-                self::PEOPLE_ID_FIELD_NAME => $peopleId,
-                self::SKILL_ID_FIELD_NAME => $skillId
+                self::PEOPLE_ID_FIELD_NAME => (int)$peopleId,
+                self::SKILL_ID_FIELD_NAME => (int)$skillId
             ];
         }
 
@@ -103,5 +103,21 @@ class PeopleSkill extends AbstractDb
         }
 
         return $this;
+    }
+
+    /**
+     * Get skill IDs associated with a given people ID
+     *
+     * @param int $peopleId
+     * @return array
+     */
+    public function getSkillIds(int $peopleId): array
+    {
+        $connection = $this->getConnection();
+        $select = $connection->select()
+            ->from(self::MAIN_TABLE, [self::SKILL_ID_FIELD_NAME])
+            ->where(self::PEOPLE_ID_FIELD_NAME . ' = ?', $peopleId);
+
+        return $connection->fetchCol($select);
     }
 }

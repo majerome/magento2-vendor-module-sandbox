@@ -40,4 +40,6 @@
                 type="Vendor\Module\Model\SkillSearchResults"/>
     <preference for="Vendor\Module\Api\SkillRepositoryInterface"
                 type="Vendor\Module\Model\SkillRepository"/>
+    <preference for="Vendor\Module\Api\PeopleSkillSyncInterface"
+                type="Vendor\Module\Model\PeopleSkillSync"/>
 </config>

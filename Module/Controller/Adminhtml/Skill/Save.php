@@ -13,6 +13,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\HTTP\PhpEnvironment\Request;
+use Vendor\Module\Api\PeopleSkillSyncInterface;
 use Vendor\Module\Api\SkillRepositoryInterface;
 use Vendor\Module\Model\SkillFactory;
 
@@ -26,11 +27,13 @@ class Save extends Action implements HttpPostActionInterface
      * @param Context $context
      * @param SkillFactory $skillFactory
      * @param SkillRepositoryInterface $skillRepository
+     * @param PeopleSkillSyncInterface $peopleSkillSync
      */
     public function __construct(
         Action\Context                            $context,
         private readonly SkillFactory             $skillFactory,
         private readonly SkillRepositoryInterface $skillRepository,
+        private readonly PeopleSkillSyncInterface $peopleSkillSync,
     ) {
         parent::__construct($context);
     }
@@ -72,6 +75,8 @@ class Save extends Action implements HttpPostActionInterface
 
         try {
             $this->skillRepository->save($skill);
+            $peopleIds = $arrayPost['skill_people_ids'] ? array_column($arrayPost['skill_people_ids'], 'id') : [];
+            $this->peopleSkillSync->syncSkillPeople((int)$skill->getId(), $peopleIds);
             $this->messageManager->addSuccessMessage(__('The record has been saved.'));
         } catch (Exception $e) {
             $this->messageManager->addErrorMessage(__('There was a problem saving the record: %1', $e->getMessage()));
