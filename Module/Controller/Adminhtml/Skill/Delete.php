@@ -43,8 +43,8 @@ class Delete extends Action implements HttpGetActionInterface
             $skillId = $this->getRequest()->getParam('skill_id');
             $skill = $this->skillRepository->getById((int)$skillId);
             if ($skill->getId()) {
-                $relatedPeopleIds = $this->peopleSkillResource->getPeopleIds((int)$skillId);
-                if (!empty($relatedPeopleIds)) {
+                $assignedPeopleIds = $this->peopleSkillResource->getPeopleIds((int)$skillId);
+                if (!empty($assignedPeopleIds)) {
                     $this->messageManager->addErrorMessage(
                         __('This skill cannot be deleted because it is associated with one or more people.')
                     );

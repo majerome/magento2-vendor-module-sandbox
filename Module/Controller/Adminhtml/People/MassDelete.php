@@ -12,6 +12,7 @@ use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Ui\Component\MassAction\Filter;
 use Vendor\Module\Model\ResourceModel\People\CollectionFactory;
+use Vendor\Module\Model\ResourceModel\PeopleSkill;
 
 class MassDelete extends Action implements HttpPostActionInterface
 {
@@ -23,11 +24,13 @@ class MassDelete extends Action implements HttpPostActionInterface
      * @param Context $context
      * @param CollectionFactory $collectionFactory
      * @param Filter $filter
+     * @param PeopleSkill $peopleSkillResource
      */
     public function __construct(
         private readonly Context           $context,
         private readonly CollectionFactory $collectionFactory,
-        private readonly Filter            $filter
+        private readonly Filter            $filter,
+        private readonly PeopleSkill   $peopleSkillResource
     ) {
         parent::__construct($context);
     }
@@ -42,25 +45,32 @@ class MassDelete extends Action implements HttpPostActionInterface
     {
         $collection = $this->collectionFactory->create();
         $items = $this->filter->getCollection($collection);
-        $itemsSize = $items->getSize();
+        $deletedCount = 0;
 
         foreach ($items as $item) {
             try {
+                $relatedSkillsIds = $this->peopleSkillResource->getSkillIds((int)$item->getId());
+                if (!empty($relatedSkillsIds)) {
+                    throw new LocalizedException(
+                        __('This person cannot be deleted because they are associated with one or more skills.')
+                    );
+                }
                 $item->delete();
-                $this->messageManager->addSuccessMessage(__('A total of %1 record(s) have been deleted.', $itemsSize));
+                $deletedCount++;
             } catch (LocalizedException $e) {
                 $this->messageManager->addErrorMessage(
-                    __('An error occurred while deleting the record with ID %1: %2', $item->getId(), $e->getMessage())
-                );
-            } catch (\Exception $e) {
-                $this->messageManager->addErrorMessage(
                     __(
-                        'An unexpected error occurred while deleting the record with ID %1: %2',
+                        'An error occurred while deleting the record with ID %1: %2',
                         $item->getId(),
                         $e->getMessage()
                     )
                 );
             }
+        }
+        if ($deletedCount > 0) {
+            $this->messageManager->addSuccessMessage(
+                __('A total of %1 record(s) have been deleted.', $deletedCount)
+            );
         }
 
         /** @var Redirect $redirect */

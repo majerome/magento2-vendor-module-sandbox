@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Vendor\Module\Controller\Adminhtml\Skill;
 
-use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Backend\Model\View\Result\Redirect;
@@ -12,8 +11,8 @@ use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Ui\Component\MassAction\Filter;
-use Vendor\Module\Model\ResourceModel\PeopleSkill;
 use Vendor\Module\Model\ResourceModel\Skill\CollectionFactory;
+use Vendor\Module\Model\ResourceModel\PeopleSkill;
 
 class MassDelete extends Action implements HttpPostActionInterface
 {
@@ -50,15 +49,15 @@ class MassDelete extends Action implements HttpPostActionInterface
 
         foreach ($items as $item) {
             try {
-                $relatedPeopleIds = $this->peopleSkillResource->getPeopleIds((int)$item->getId());
-                if (!empty($relatedPeopleIds)) {
+                $assignedPeopleIds = $this->peopleSkillResource->getPeopleIds((int)$item->getId());
+                if (!empty($assignedPeopleIds)) {
                     throw new LocalizedException(
                         __('This skill cannot be deleted because it is associated with one or more people.')
                     );
                 }
                 $item->delete();
                 $deletedCount++;
-            } catch (LocalizedException | Exception $e) {
+            } catch (LocalizedException $e) {
                 $this->messageManager->addErrorMessage(
                     __(
                         'An error occurred while deleting the record with ID %1: %2',

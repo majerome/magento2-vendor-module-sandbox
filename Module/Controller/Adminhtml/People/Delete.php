@@ -11,6 +11,7 @@ use Magento\Backend\Model\View\Result\Redirect;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Vendor\Module\Api\PeopleRepositoryInterface;
+use Vendor\Module\Model\ResourceModel\PeopleSkill;
 
 class Delete extends Action implements HttpGetActionInterface
 {
@@ -20,10 +21,12 @@ class Delete extends Action implements HttpGetActionInterface
      * Constructor class
      *
      * @param Context $context
+     * @param PeopleSkill $peopleSkillResource
      * @param PeopleRepositoryInterface $peopleRepository
      */
     public function __construct(
         private readonly Context          $context,
+        private readonly PeopleSkill   $peopleSkillResource,
         private readonly PeopleRepositoryInterface  $peopleRepository,
     ) {
         parent::__construct($context);
@@ -39,8 +42,16 @@ class Delete extends Action implements HttpGetActionInterface
         try {
             $peopleId = $this->getRequest()->getParam('people_id');
             $people = $this->peopleRepository->getById($peopleId);
-
-            if ($people->getData('people_id')) {
+            if ($people->getId()) {
+                $relatedSkillIds = $this->peopleSkillResource->getSkillIds((int)$peopleId);
+                if (!empty($relatedSkillIds)) {
+                    $this->messageManager->addErrorMessage(
+                        __('This person cannot be deleted because they are associated with one or more skills.')
+                    );
+                    /** @var Redirect $redirect */
+                    $redirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+                    return $redirect->setPath('*/*');
+                }
                 $this->peopleRepository->delete($people);
                 $this->messageManager->addSuccessMessage(__('The record has been deleted.'));
             } else {
